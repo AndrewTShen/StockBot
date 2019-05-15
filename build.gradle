@@ -30,13 +30,15 @@ dependencies {
     implementation 'com.google.guava:guava:27.0.1-jre'
 
     // implementation files('Stock.java')
-    implementation files('src/java/Stock.java')
+    // implementation files('src/java/Stock.java')
 
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 
     compile 'org.patriques:alphavantage4j:1.4'
+
+    compile 'org.jsoup:jsoup:1.12.1'
 }
 
 // Define the main class for the application
