@@ -4,43 +4,49 @@
 package StockBot;
 
 import java.util.*;
-import Stock.Stock;
-import StockScrapper.StockScrapper;
 
-// UI
+// StockList
+import StockList.StockList;
+
+// Stocks information
+import Stock.Stock;
+
+// GUI
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-// Stock Data
-import org.patriques.output.timeseries.data.StockData;
+public class App {
 
+    final static int REFRESH_RATE = 5;
 
-public class App implements ActionListener{
-
-    final static int REFRESH_RATE = 10;
-
-    private static JLabel price = new JLabel("MSFT Open:  0     ");
-    private static JLabel current_balance = new JLabel("Balance:  0     ");
-    private static JLabel amountStock = new JLabel("Amount of Stock:  0     ");
+    private static JLabel price = new JLabel("MSFT Price:  Loading Data...");
+    private static JLabel current_balance = new JLabel("Balance:  0");
+    private static JLabel amountStock = new JLabel("Amount of Stock:  0");
     private static JFrame frame = new JFrame();
 
     private static int num_stock = 0;
     private static double balance = 0;
 
-    public App() {
-        // the clickable button
-        JButton button = new JButton("Buy Stock");
-        button.addActionListener(this);
+    // Holds information about the stocks
+    private static StockList stocklist = new StockList();
 
+    private static JPanel panel = new JPanel();
+
+
+    // private static JPanel panel2 = new JPanel();
+    // private static JLabel price2 = new JLabel("MSFT Price:  Loading Data...");
+
+
+    public App() {
         // the panel with the button and text
-        JPanel panel = new JPanel();
         panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 10, 30));
         panel.setLayout(new GridLayout(0, 1));
-        panel.add(button);
         panel.add(price);
         panel.add(current_balance);
         panel.add(amountStock);
+
+        panel.setLayout(new GridLayout(0, 2));
 
         // set up the frame and display it
         frame.add(panel, BorderLayout.CENTER);
@@ -51,35 +57,70 @@ public class App implements ActionListener{
         frame.setVisible(true);
     }
 
-    // process the button clicks
-    public void actionPerformed(ActionEvent e) {
-        num_stock++;
-        amountStock.setText("Amount of Stock:  " + num_stock);
-        
-        Stock msft = new Stock("MSFT");
-        StockData msft_stockdata = msft.getData();
-        balance -= msft_stockdata.getOpen();
-        current_balance.setText("Balance:  " + balance);
+    // public static void formatPanel() {
+    //     // Buy sell buttons
+    //     for (Stock : )
+    // }
 
+    public static void makeButtons() {
+        // the clickable button
+        JButton buy_button = new JButton( new AbstractAction("Buy Stock") {
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+                if (stocklist.getStockAt(0).getCurrPrice() == -1) return;
+                num_stock++;
+                amountStock.setText("Amount of Stock:  " + num_stock);
+                
+                double price = stocklist.getStockAt(0).getCurrPrice();
+                balance -= price;
+                current_balance.setText("Balance:  " + String.format("%.2f", balance));
+            }
+        });
+        JButton sell_button = new JButton( new AbstractAction("Sell Stock") {
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+                if (stocklist.getStockAt(0).getCurrPrice() == -1) return;
+                if (num_stock >= 1) {
+                    num_stock--;
+                    amountStock.setText("Amount of Stock:  " + num_stock);
+                    
+                    double price = stocklist.getStockAt(0).getCurrPrice();
+                    balance += price;
+                    current_balance.setText("Balance:  " + String.format("%.2f", balance));
+                }
+            }
+        });
+
+        panel.add(buy_button);
+        panel.add(sell_button);
     }
 
     public static void main(String[] args) {
-        StockScrapper msft = new StockScrapper("MSFT");
-        msft.getData();
-        // new App();
+        new App();
+        makeButtons();
+        
+        System.out.println("Time: " + new Date());
 
-        // try {  
-        //     while (true) {
-        //         Stock msft = new Stock("MSFT");
-        //         StockData msft_stockdata = msft.getData();
-        //         price.setText("MSFT Open: " + Double.toString(msft_stockdata.getOpen()));
-        //         System.out.println(new Date());
-        //         Thread.sleep(REFRESH_RATE * 1000); // change to 1000
-        //         System.out.println("Breaking");
-        //     }    
-        // } catch (InterruptedException e) {
-        //     e.printStackTrace();
-        // }
-        // System.out.println("Finished.");
+        Stock msft = new Stock("MSFT", "https://www.investing.com/equities/apple-computer-inc");
+        
+        stocklist.addStock(msft);
+
+        try {  
+            while (true) {
+
+                // Update Prices
+                for (Stock stock : stocklist.getStocks()) {
+                    stock.setCurrPrice(stock.getData());
+                }
+
+                price.setText("MSFT Price: " + String.format("%.2f", stocklist.getStockAt(0).getCurrPrice()));
+
+                // Delay so we aren't overloading the website.
+                Thread.sleep(REFRESH_RATE * 1000); // change to 1000
+            }    
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Finished.");
     }
 }
