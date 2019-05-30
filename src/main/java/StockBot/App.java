@@ -18,11 +18,11 @@ import java.awt.event.*;
 
 public class App {
 
-    final static int REFRESH_RATE = 5;
+    final static int REFRESH_RATE = 10;
 
     private static JLabel price = new JLabel("MSFT Price:  Loading Data...");
     private static JLabel current_balance = new JLabel("Balance:  0");
-    private static JLabel amountStock = new JLabel("Amount of Stock:  0");
+    private static JLabel amountStock = new JLabel("Amount of Stock Owned:  0");
     private static JFrame frame = new JFrame();
 
     private static int num_stock = 0;
@@ -39,28 +39,14 @@ public class App {
 
 
     public App() {
-        // the panel with the button and text
-        panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 10, 30));
-        panel.setLayout(new GridLayout(0, 1));
-        panel.add(price);
-        panel.add(current_balance);
-        panel.add(amountStock);
-
-        panel.setLayout(new GridLayout(0, 2));
-
         // set up the frame and display it
-        frame.add(panel, BorderLayout.CENTER);
+        // frame.add(panel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("StockBot");
         frame.pack();
-        frame.setSize(500, 500);
+        frame.setSize(200, 300);
         frame.setVisible(true);
     }
-
-    // public static void formatPanel() {
-    //     // Buy sell buttons
-    //     for (Stock : )
-    // }
 
     public static void makeButtons() {
         // the clickable button
@@ -69,20 +55,21 @@ public class App {
             public void actionPerformed( ActionEvent e ) {
                 if (stocklist.getStockAt(0).getCurrPrice() == -1) return;
                 num_stock++;
-                amountStock.setText("Amount of Stock:  " + num_stock);
+                amountStock.setText("Amount of Stock Owned:  " + num_stock);
                 
                 double price = stocklist.getStockAt(0).getCurrPrice();
                 balance -= price;
                 current_balance.setText("Balance:  " + String.format("%.2f", balance));
             }
         });
+
         JButton sell_button = new JButton( new AbstractAction("Sell Stock") {
             @Override
             public void actionPerformed( ActionEvent e ) {
                 if (stocklist.getStockAt(0).getCurrPrice() == -1) return;
                 if (num_stock >= 1) {
                     num_stock--;
-                    amountStock.setText("Amount of Stock:  " + num_stock);
+                    amountStock.setText("Amount of Stock Owned:  " + num_stock);
                     
                     double price = stocklist.getStockAt(0).getCurrPrice();
                     balance += price;
@@ -91,8 +78,33 @@ public class App {
             }
         });
 
-        panel.add(buy_button);
-        panel.add(sell_button);
+        // the panel with the button and text
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 10, 30));
+        panel.setLayout(new GridBagLayout());
+        
+        GridBagConstraints c = new GridBagConstraints();
+        c.anchor = GridBagConstraints.WEST;
+        // c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        panel.add(price, c);
+        c.gridx = 0;
+        c.gridy = 1;
+        panel.add(current_balance, c);
+
+        c.gridx = 0;
+        c.gridy = 2;
+        panel.add(amountStock, c);
+
+        c.gridx = 0;
+        c.gridy = 3;
+        panel.add(buy_button, c);
+
+        c.gridx = 0;
+        c.gridy = 4;
+        panel.add(sell_button, c);
+
+        frame.add(panel, BorderLayout.CENTER);
     }
 
     public static void main(String[] args) {

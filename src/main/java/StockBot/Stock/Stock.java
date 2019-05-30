@@ -18,14 +18,16 @@ public class Stock {
     private String stockAbv;
     private String url;
     private double currPrice;
+    
 
+
+    // Constructor
   	public Stock(String stockAbv, String url) {
         this.stockAbv = stockAbv;
         this.url = url;
         this.currPrice = this.getData();
         System.out.println("Initializing + " + this.url);
     }
-
 
     // Access real value
     public double getData() {
@@ -56,6 +58,7 @@ public class Stock {
         return this.currPrice;
     }
 
+    // Mutators
     public void setCurrPrice(double newPrice) {
         this.currPrice = newPrice;
     }
