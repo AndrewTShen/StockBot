@@ -8,6 +8,9 @@ import java.util.*;
 // StockList
 import StockList.StockList;
 
+// Mutable Double
+import MutableDouble.MutableDouble;
+
 // Stocks information
 import Stock.Stock;
 
@@ -18,117 +21,95 @@ import java.awt.event.*;
 
 public class App {
 
-    final static int REFRESH_RATE = 10;
+    final static int REFRESH_RATE = 20;
 
-    private static JLabel price = new JLabel("MSFT Price:  Loading Data...");
-    private static JLabel current_balance = new JLabel("Balance:  0");
-    private static JLabel amountStock = new JLabel("Amount of Stock Owned:  0");
-    private static JFrame frame = new JFrame();
-
-    private static int num_stock = 0;
-    private static double balance = 0;
+    public static JFrame frame = new JFrame();
+    private static MutableDouble balance;
+    private static JLabel balance_label;
+    private static JTextField add_stocks_field;
+    private static int numStocks;
+    private static JLabel title;
 
     // Holds information about the stocks
-    private static StockList stocklist = new StockList();
-
-    private static JPanel panel = new JPanel();
-
-
-    // private static JPanel panel2 = new JPanel();
-    // private static JLabel price2 = new JLabel("MSFT Price:  Loading Data...");
-
+    private static StockList stocklist;
 
     public App() {
         // set up the frame and display it
-        // frame.add(panel, BorderLayout.CENTER);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("StockBot");
-        frame.pack();
-        frame.setSize(200, 300);
-        frame.setVisible(true);
-    }
+        frame.setLayout(new GridBagLayout());
 
-    public static void makeButtons() {
-        // the clickable button
-        JButton buy_button = new JButton( new AbstractAction("Buy Stock") {
-            @Override
-            public void actionPerformed( ActionEvent e ) {
-                if (stocklist.getStockAt(0).getCurrPrice() == -1) return;
-                num_stock++;
-                amountStock.setText("Amount of Stock Owned:  " + num_stock);
-                
-                double price = stocklist.getStockAt(0).getCurrPrice();
-                balance -= price;
-                current_balance.setText("Balance:  " + String.format("%.2f", balance));
-            }
-        });
+        // Set up the balance bar
+        balance = new MutableDouble(0.00);
+        balance_label = new JLabel("Balance: $0.00");
+        balance_label.setFont(balance_label.getFont ().deriveFont (24.0f));
 
-        JButton sell_button = new JButton( new AbstractAction("Sell Stock") {
-            @Override
+        GridBagConstraints c = new GridBagConstraints();
+
+        title = new JLabel("The StockBot");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        title.setFont(title.getFont ().deriveFont (64.0f));
+        c.ipady = 40;      //make this component tall
+        c.weightx = 0.0;
+        c.gridwidth = 3;
+        c.gridx = 0;
+        c.gridy = 0;
+        frame.add(title, c);
+
+        c.ipady = 40;      //make this component tall
+        c.weightx = 0.0;
+        c.gridwidth = 3;
+        c.gridx = 0;
+        c.gridy = 1;
+        frame.add(balance_label, c);
+
+        add_stocks_field = new JTextField(" Enter Stock to Add");
+
+        c.ipady = 10;      //make this component tall
+        c.weightx = 0.0;
+        c.gridwidth = 3;
+        c.gridx = 0;
+        c.gridy = 3;
+        frame.add(add_stocks_field, c);
+
+        add_stocks_field.addActionListener(new ActionListener() {
             public void actionPerformed( ActionEvent e ) {
-                if (stocklist.getStockAt(0).getCurrPrice() == -1) return;
-                if (num_stock >= 1) {
-                    num_stock--;
-                    amountStock.setText("Amount of Stock Owned:  " + num_stock);
-                    
-                    double price = stocklist.getStockAt(0).getCurrPrice();
-                    balance += price;
-                    current_balance.setText("Balance:  " + String.format("%.2f", balance));
+                String text = add_stocks_field.getText();
+                System.out.println(text);
+                add_stocks_field.selectAll();
+                if (stocklist != null) {
+                    // Try adding the new stock
+                    Stock toAdd = new Stock(text.substring(text.lastIndexOf('/')+1), text, frame, numStocks, balance, balance_label);
+                    stocklist.addStock(toAdd);
+                    numStocks++;
                 }
             }
         });
 
-        // the panel with the button and text
-        panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 10, 30));
-        panel.setLayout(new GridBagLayout());
-        
-        GridBagConstraints c = new GridBagConstraints();
-        c.anchor = GridBagConstraints.WEST;
-        // c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        panel.add(price, c);
-        c.gridx = 0;
-        c.gridy = 1;
-        panel.add(current_balance, c);
-
-        c.gridx = 0;
-        c.gridy = 2;
-        panel.add(amountStock, c);
-
-        c.gridx = 0;
-        c.gridy = 3;
-        panel.add(buy_button, c);
-
-        c.gridx = 0;
-        c.gridy = 4;
-        panel.add(sell_button, c);
-
-        frame.add(panel, BorderLayout.CENTER);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setTitle("StockBot");
+        frame.pack();
+        frame.setSize(1000, 1500);
+        frame.setVisible(true);
     }
 
     public static void main(String[] args) {
         new App();
-        makeButtons();
-        
-        System.out.println("Time: " + new Date());
 
-        Stock msft = new Stock("MSFT", "https://www.investing.com/equities/apple-computer-inc");
-        
+        stocklist = new StockList(frame);
+
+        Stock appl = new Stock("apple-computer-inc", "https://www.investing.com/equities/apple-computer-inc", frame, 0, balance, balance_label);
+        numStocks++;
+        Stock msft = new Stock("microsoft-corp", "https://www.investing.com/equities/microsoft-corp", frame, 1, balance, balance_label);
+        numStocks++;
+
+        stocklist.addStock(appl);
         stocklist.addStock(msft);
 
         try {  
             while (true) {
-
-                // Update Prices
-                for (Stock stock : stocklist.getStocks()) {
-                    stock.setCurrPrice(stock.getData());
-                }
-
-                price.setText("MSFT Price: " + String.format("%.2f", stocklist.getStockAt(0).getCurrPrice()));
+                stocklist.updateAllStocks();
 
                 // Delay so we aren't overloading the website.
-                Thread.sleep(REFRESH_RATE * 1000); // change to 1000
+                Thread.sleep(REFRESH_RATE * 1000);
             }    
         } catch (InterruptedException e) {
             e.printStackTrace();
