@@ -17,6 +17,7 @@ plugins {
 javadoc {
     source = sourceSets.main.allJava
     classpath = configurations.compile
+    destinationDir = file("docs")
 }
 
 repositories {

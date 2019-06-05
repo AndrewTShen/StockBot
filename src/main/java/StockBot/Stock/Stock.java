@@ -49,7 +49,7 @@ public class Stock {
         this.num_stock = 0;
         this.price = new JLabel(stockAbv.toUpperCase() + " Price:  Loading Data...");
         this.update();
-        this.amountStock = new JLabel("Amount of Stock Owned:  0.00");
+        this.amountStock = new JLabel("Amount of Stock Owned:  0");
         this.balance = balance;
         this.balance_label = balance_label;
         this.panel = new JPanel();
