@@ -1,1 +1,0 @@
-typeSearchIndex = [{"p":"StockBot","l":"App"},{"p":"MutableDouble","l":"MutableDouble"},{"p":"Stock","l":"Stock"},{"p":"StockList","l":"StockList"}]
