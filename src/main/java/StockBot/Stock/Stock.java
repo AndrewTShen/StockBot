@@ -27,23 +27,28 @@ public class Stock {
     private String url;
     private double currPrice;
     private JLabel price;
-    // private JLabel current_balance;
     private JLabel balance_label;
-
     private JLabel amountStock;
     private JPanel panel;
     private int num_stock;
-    // private double balance;
     private MutableDouble balance;
 
-    // Constructor
+    /**
+     * Stock class for holding all associated stock information and GUI.
+     * @param stockAbv Company abreviation.
+     * @param url URL that the stock information is requested from.
+     * @param frame Frame that the GUI is added to.
+     * @param colNum Column number the stock is added to.
+     * @param balance Current balance shared by all of the stocks.
+     * @param balance_label The balance label that is shared by all of the stocks.
+     */
   	public Stock(String stockAbv, String url, JFrame frame, int colNum, MutableDouble balance, JLabel balance_label) {
         this.stockAbv = stockAbv.toUpperCase();
         this.url = url;
         this.currPrice = this.getData();
         this.num_stock = 0;
         this.price = new JLabel(stockAbv.toUpperCase() + " Price:  Loading Data...");
-        // this.current_balance = new JLabel("Balance:  0");
+        this.update();
         this.amountStock = new JLabel("Amount of Stock Owned:  0.00");
         this.balance = balance;
         this.balance_label = balance_label;
@@ -53,6 +58,11 @@ public class Stock {
         makeGUI(frame, colNum);
     }
 
+    /**
+     * Sets up the GUI for the Stock class.
+     * @param frame Frame that the GUI is added to.
+     * @param colNum Column number the stock is added to.
+     */
     public void makeGUI(JFrame frame, int colNum) {
         System.out.println("Adding GUI");
         // the clickable button
@@ -94,13 +104,11 @@ public class Stock {
         
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.WEST;
-        // c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.HORIZONTAL;
+
         c.gridx = 1;
         c.gridy = 0;
         this.panel.add(this.price, c);
-        // c.gridx = 1;
-        // c.gridy = 1;
-        // this.panel.add(this.current_balance, c);
 
         c.gridx = 1;
         c.gridy = 2;
@@ -122,7 +130,10 @@ public class Stock {
         frame.setVisible(true);
     }
 
-    // Access real value
+    /**
+     * Returns the real-time stock prices.
+     * @return Real-time stock prices.
+     */
     public double getData() {
         System.out.println("Getting Data From " + this.url);
         Document doc = null;
@@ -134,7 +145,6 @@ public class Stock {
         }
         
         System.out.printf(doc.title() + ": ");
-        // Elements newsHeadlines = doc.select("span.arial_26.inlineblock.pid-6408-last");
         Elements newsHeadlines = doc.select("span#last_last");
 
         for (Element headline : newsHeadlines) {
@@ -147,16 +157,27 @@ public class Stock {
         return -1;
     }
 
-    // Accessors
+    /**
+     * Get the current price stored locally for faster purchases and less
+     * web scrapping.
+     * @return Current price stored locally.
+     */
     public double getCurrPrice() {
         return this.currPrice;
     }
 
-    // Mutators
+    /**
+     * Set the current price of the stock to a new value.
+     * @param newPrice The new price of the stock.
+     */
     public void setCurrPrice(double newPrice) {
         this.currPrice = newPrice;
     }
 
+    /**
+     * Updates the price of the stock to the real-time value and stores it
+     * to a local variable for faster access.
+     */
     public void update() {
         this.currPrice = this.getData();
         this.price.setText(stockAbv + " Price: $" + String.format("%.2f", this.currPrice));
