@@ -1,0 +1,9 @@
+-classpath '/Users/andrewshen/.gradle/caches/modules-2/files-2.1/org.patriques/alphavantage4j/1.4/36248e503759c89bd402aa5188ae6cc81596656/alphavantage4j-1.4.jar:/Users/andrewshen/.gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.12.1/55819a28fc834c2f2bcf4dcdb278524dc3cf088f/jsoup-1.12.1.jar:/Users/andrewshen/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.2/3edcfe49d2c6053a70a2a47e4e1c2f94998a49cf/gson-2.8.2.jar:/Users/andrewshen/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar'
+-d '/Users/andrewshen/Documents/APCompSci/StockBot/build/docs/javadoc'
+-doctitle 'StockBot API'
+-quiet 
+-windowtitle 'StockBot API'
+'/Users/andrewshen/Documents/APCompSci/StockBot/src/main/java/StockBot/StockList/StockList.java'
+'/Users/andrewshen/Documents/APCompSci/StockBot/src/main/java/StockBot/App.java'
+'/Users/andrewshen/Documents/APCompSci/StockBot/src/main/java/StockBot/MutableDouble/MutableDouble.java'
+'/Users/andrewshen/Documents/APCompSci/StockBot/src/main/java/StockBot/Stock/Stock.java'
