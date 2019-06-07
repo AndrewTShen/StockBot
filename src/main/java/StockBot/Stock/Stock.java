@@ -149,7 +149,14 @@ public class Stock {
 
         for (Element headline : newsHeadlines) {
             System.out.printf(headline.ownText() + '\n');
-            return Double.parseDouble(headline.ownText()); 
+            String input = headline.ownText();
+            String cleanInput = "";
+            for (int i = 0; i < input.length(); i++) {
+                if (input.charAt(i) != ',') {
+                    cleanInput += input.charAt(i);
+                }
+            }
+            return Double.parseDouble(cleanInput); 
         }
 
         // if no headline it fails
